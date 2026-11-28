@@ -88,7 +88,7 @@ h2 small { display: block; font-size: 16px; letter-spacing: .05em; color: var(--
 <div class="page">
 <header>
   <h1>PÉRIHÉLIE</h1><div></div>
-  <p>Concepts pour refaire tous les menus de Minecraft aux couleurs du mod : l'écran titre, le menu pause et tous les écrans qui vont avec. Tout ce qui bouge ici bougerait aussi en jeu. Les boutons réagissent au survol.</p>
+  <p>Concepts pour refaire tous les menus de Minecraft aux couleurs du mod : l'écran titre, le menu pause et tous les écrans qui vont avec. Tout ce qui bouge ici bougerait aussi en jeu. Tous les boutons marchent : clique pour enchaîner les écrans (Solo → monde → chargement → en jeu → Échap → pause…).</p>
   <p>Choisis un concept par partie (par exemple <i style="color:var(--orange);font-style:normal">Titre B, Pause A, Chargement 1</i>), ou mélange des idées.</p>
   <nav class="toc"><a href="#titre">Écran titre</a><a href="#pause">Menu pause</a><a href="#autres">Les autres menus</a></nav>
 </header>
@@ -277,7 +277,7 @@ function fit(c) {
   return [w, h];
 }
 const draws = [];
-function on(el, f) { draws.push({ el, f, visible: false, state: {} }); }
+function on(el, f, live) { const d = { el, f, visible: !!live, state: {} }; draws.push(d); if (window.__io && !live) window.__io.observe(el); return d; }
 
 /* étoiles fixes qui scintillent */
 function starfield(state, w, h, n, seed) {
@@ -530,7 +530,8 @@ document.querySelectorAll('[data-draw="hyper"]').forEach(c => on(c, (g, w, h, t,
     g.strokeStyle = s.c > .7 ? `rgba(160,140,255,${1 - s.z})` : `rgba(150,220,255,${1 - s.z})`; g.lineWidth = (1 - s.z) * w / 500;
     g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke();
   }
-  const box = c.closest('.screen'), p = (t % 12) / 12;
+  const box = c.parentElement, p = (t % 12) / 12;
+  if (!box.querySelector('[data-progress]')) return;
   const steps = ['Préparation du monde', 'Génération des tronçons', 'Calcul des orbites', 'Allumage des moteurs', 'Sortie d’hyperespace'];
   box.querySelector('[data-progress]').style.width = (p * 100) + '%';
   box.querySelector('[data-pct]').textContent = Math.floor(p * 100) + ' %';
@@ -597,11 +598,12 @@ document.querySelectorAll('[data-sliders]').forEach(box => {
 
 /* ------------------------------------------------------------------ boucle : seulement ce qui est à l'écran */
 const io = new IntersectionObserver(es => es.forEach(e => { const d = draws.find(x => x.el === e.target); if (d) d.visible = e.isIntersecting; }), { rootMargin: '200px' });
-draws.forEach(d => io.observe(d.el));
+draws.forEach(d => io.observe(d.el)); window.__io = io;
 const t0 = performance.now();
 let tipAt = 0, tip = 0;
 function frame(now) {
   const t = (now - t0) / 1000;
+  for (let i = draws.length - 1; i >= 0; i--) if (!draws[i].el.isConnected) draws.splice(i, 1);
   for (const d of draws) { if (!d.visible) continue; const [w, h] = fit(d.el); d.f(d.el.getContext('2d'), w, h, t, d.state); }
   // télémétrie de la console
   document.querySelectorAll('[data-tel]').forEach(s => { const i = +s.dataset.tel; s.textContent = i === 0 ? Math.round(180 + 40 * Math.sin(t * .7)) : i === 1 ? (4520 + t * 3.1).toFixed(0) : '86'; });
@@ -613,6 +615,7 @@ function frame(now) {
 }
 requestAnimationFrame(frame);
 </script>
+<script src="nav.js"></script>
 <style>
 .slidein { animation: slidein 1s cubic-bezier(.2,.8,.2,1) both; }
 @keyframes slidein { from { translate: -100% 0; } to { translate: 0 0; } }
