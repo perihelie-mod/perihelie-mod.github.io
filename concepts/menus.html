@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Perihelie : concepts des menus</title>
+<link rel="icon" href="../logo.png">
+<style>
+@font-face { font-family: Rajdhani; src: url(fonts/rajdhani_medium.ttf); font-weight: 500; }
+@font-face { font-family: Rajdhani; src: url(fonts/rajdhani_bold.ttf); font-weight: 700; }
+:root {
+  --cyan: #6be4f2; --cyan-dim: #2f6e7e; --orange: #ff9f45; --red: #ff5d52; --white: #f2f8fa;
+  --soft: #b4c8d2; --dim: #7390a0; --faint: #4a6272; --bg: #07080d; --gold: #d9b565;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--white); font: 500 17px/1.55 Rajdhani, system-ui, sans-serif; }
+.page { max-width: 1240px; margin: 0 auto; padding: 48px 24px 96px; }
+.page > header h1 { font-size: 46px; letter-spacing: .18em; margin: 0; font-weight: 700; }
+.page > header h1 + div { width: 180px; height: 3px; background: var(--orange); margin: 10px 0 18px; }
+.page > header p { color: var(--soft); max-width: 780px; margin: 0 0 8px; font-size: 19px; }
+h2 { font-size: 30px; letter-spacing: .12em; margin: 72px 0 6px; text-transform: uppercase; }
+h2 small { display: block; font-size: 16px; letter-spacing: .05em; color: var(--dim); text-transform: none; }
+.concept { margin: 30px 0 0; }
+.concept h3 { margin: 0 0 4px; font-size: 22px; letter-spacing: .08em; }
+.concept h3 b { color: var(--orange); margin-right: 10px; }
+.concept p { margin: 0 0 12px; color: var(--soft); max-width: 900px; }
+.concept p i { color: var(--cyan); font-style: normal; }
+
+/* ------------------------------------------------------------ l'écran : tout se mesure en cqw */
+.screen { position: relative; aspect-ratio: 16/9; overflow: hidden; border: 1px solid #1b2230; border-radius: 6px; background: #000;
+  container-type: inline-size; font-size: 1.25cqw; user-select: none; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+.screen canvas.fill, .screen .photo { position: absolute; inset: 0; width: 100%; height: 100%; }
+.photo { object-fit: cover; }
+.kenburns { animation: kb 40s ease-in-out infinite alternate; transform-origin: 60% 45%; }
+@keyframes kb { from { transform: scale(1.05) translate(0, 0); } to { transform: scale(1.18) translate(-2.5%, 1.5%); } }
+.vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, transparent 30%, rgba(0,0,0,.65) 100%); pointer-events: none; }
+.blur { filter: blur(.5cqw) brightness(.45) saturate(1.2); transform: scale(1.06); }
+
+/* logo du mod */
+.logo { position: absolute; font-weight: 700; letter-spacing: .2em; color: #fff6ea; line-height: 1; text-shadow: 0 0 2cqw rgba(255,180,120,.25); }
+.logo .bar { height: .35cqw; background: var(--orange); margin-top: 1.3cqw; animation: draw 1.6s cubic-bezier(.2,.8,.2,1) both; transform-origin: left; }
+.logo .sub { font-size: .32em; letter-spacing: .12em; color: #e8eef5; margin-top: 1.1cqw; font-weight: 500; }
+.logo .ver { font-size: .21em; letter-spacing: .25em; color: var(--cyan); margin-top: .7cqw; }
+@keyframes draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.rise { animation: rise .9s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes rise { from { opacity: 0; translate: 0 1.2cqw; } to { opacity: 1; translate: 0 0; } }
+
+/* boutons du HUD : coins coupés, cadre cyan, lueur au survol */
+.btn { position: relative; display: flex; align-items: center; gap: .9cqw; height: 3.4cqw; padding: 0 1.5cqw; margin: 0 0 .75cqw;
+  color: var(--white); font-weight: 700; font-size: 1.35cqw; letter-spacing: .14em; text-transform: uppercase; cursor: pointer;
+  background: linear-gradient(180deg, rgba(20,34,46,.82), rgba(8,14,22,.82));
+  clip-path: polygon(.9cqw 0, 100% 0, 100% calc(100% - .9cqw), calc(100% - .9cqw) 100%, 0 100%, 0 .9cqw);
+  transition: color .2s, background .2s, transform .2s; }
+.btn::before { content: ""; position: absolute; inset: 0; padding: 1px; background: linear-gradient(90deg, var(--cyan-dim), rgba(107,228,242,.25));
+  clip-path: inherit; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+.btn::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: .3cqw; background: var(--cyan); opacity: .0; transition: opacity .2s; }
+.btn:hover, .btn.on { background: linear-gradient(180deg, rgba(40,90,110,.75), rgba(12,40,54,.75)); transform: translateX(.4cqw); }
+.btn:hover::after, .btn.on::after { opacity: 1; }
+.btn:hover::before, .btn.on::before { background: linear-gradient(90deg, var(--cyan), rgba(107,228,242,.4)); }
+.btn .k { margin-left: auto; color: var(--dim); font-size: .8em; letter-spacing: .1em; }
+.btn.small { height: 2.8cqw; font-size: 1.1cqw; }
+.btn.orange::before { background: linear-gradient(90deg, #8a4a1c, rgba(255,159,69,.3)); }
+.btn.orange:hover { background: linear-gradient(180deg, rgba(110,60,20,.75), rgba(54,28,12,.75)); }
+.btn.orange::after { background: var(--orange); }
+.sheen { position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.12) 50%, transparent 70%);
+  transform: translateX(-120%); animation: sheen 5s ease-in-out infinite; pointer-events: none; }
+@keyframes sheen { 0%, 70% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+
+.foot { position: absolute; bottom: 1.6cqw; font-size: .95cqw; letter-spacing: .2em; color: var(--dim); text-transform: uppercase; }
+.panel { position: absolute; background: linear-gradient(180deg, rgba(14,22,32,.86), rgba(6,10,16,.9));
+  clip-path: polygon(1.2cqw 0, 100% 0, 100% calc(100% - 1.2cqw), calc(100% - 1.2cqw) 100%, 0 100%, 0 1.2cqw); }
+.panel::before { content: ""; position: absolute; inset: 0; padding: 1px; background: linear-gradient(160deg, rgba(107,228,242,.55), rgba(107,228,242,.08) 40%, rgba(107,228,242,.3));
+  clip-path: inherit; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+.label { font-size: .9cqw; letter-spacing: .22em; color: var(--dim); text-transform: uppercase; }
+.big { font-size: 2.2cqw; font-weight: 700; letter-spacing: .06em; }
+.gauge { height: .5cqw; background: rgba(107,228,242,.12); margin: .4cqw 0 1cqw; position: relative; overflow: hidden; }
+.gauge i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, var(--cyan-dim), var(--cyan)); }
+.gauge.o i { background: linear-gradient(90deg, #8a4a1c, var(--orange)); }
+.title { font-size: 1.7cqw; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; }
+.title + .line { height: 2px; width: 5cqw; background: var(--orange); margin: .6cqw 0 1.4cqw; }
+.choose { display: inline-block; margin-top: 10px; padding: 4px 12px; border: 1px solid var(--cyan-dim); color: var(--cyan); font-size: 15px; letter-spacing: .12em; }
+.toc { display: flex; gap: 18px; flex-wrap: wrap; margin: 18px 0 0; }
+.toc a { color: var(--cyan); text-decoration: none; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <h1>PÉRIHÉLIE</h1><div></div>
+  <p>Concepts pour refaire tous les menus de Minecraft aux couleurs du mod : l'écran titre, le menu pause et tous les écrans qui vont avec. Tout ce qui bouge ici bougerait aussi en jeu. Les boutons réagissent au survol.</p>
+  <p>Choisis un concept par partie (par exemple <i style="color:var(--orange);font-style:normal">Titre B, Pause A, Chargement 1</i>), ou mélange des idées.</p>
+  <nav class="toc"><a href="#titre">Écran titre</a><a href="#pause">Menu pause</a><a href="#autres">Les autres menus</a></nav>
+</header>
+
+<!-- ================================================================== ÉCRAN TITRE -->
+<h2 id="titre">Écran titre<small>Il remplace le panorama et le logo de Minecraft. La musique serait une musique du mod.</small></h2>
+
+<div class="concept">
+  <h3><b>Titre A</b>Hublot</h3>
+  <p>Une vraie image du mod en plein écran, qui avance très lentement comme vue d'un hublot. Les étoiles scintillent et une étoile filante passe de temps en temps. Le logo se dessine, et les boutons du HUD sont alignés à gauche. <i>Animé : panoramique lent, étoiles, logo qui se trace, reflet sur les boutons.</i></p>
+  <div class="screen" data-scene="hublot">
+    <img class="photo kenburns" src="../images/16_red_giant.jpg" alt="">
+    <canvas class="fill" data-draw="twinkle"></canvas>
+    <div class="vignette" style="background:linear-gradient(90deg, rgba(3,5,10,.85) 0%, rgba(3,5,10,.35) 45%, transparent 70%)"></div>
+    <div class="logo rise" style="left:6cqw;top:9cqw;font-size:6.4cqw">PÉRIHÉLIE<div class="bar" style="width:24cqw"></div>
+      <div class="sub">Partez à la découverte de l'inconnu</div><div class="ver">Minecraft 1.21.1 · Fabric</div></div>
+    <div style="position:absolute;left:6cqw;top:30.5cqw;width:26cqw">
+      <div class="btn on rise" style="animation-delay:.2s">Solo<span class="k">Système Sol</span><span class="sheen"></span></div>
+      <div class="btn rise" style="animation-delay:.3s">Multijoueur</div>
+      <div class="btn rise" style="animation-delay:.4s">Royaumes</div>
+      <div class="btn small rise" style="animation-delay:.5s">Options</div>
+      <div class="btn small orange rise" style="animation-delay:.6s">Quitter</div>
+    </div>
+    <div class="foot" style="left:6cqw">Périhélie 1.2.0 · 1 650 systèmes · 13 galaxies</div>
+    <div class="foot" style="right:3cqw">Mods · Langue · Accessibilité</div>
+  </div>
+</div>
+
+<div class="concept">
+  <h3><b>Titre B</b>Orbite</h3>
+  <p>Une planète du mod tourne sur elle-même en bas de l'écran, avec son atmosphère et sa face de nuit. Un vaisseau la contourne sur une orbite tracée. Le menu suit l'arc des jauges du HUD, à droite. <i>Animé : rotation de la planète, vaisseau en orbite, nuages, menu en arc.</i></p>
+  <div class="screen" data-scene="orbite">
+    <canvas class="fill" data-draw="orbit"></canvas>
+    <div class="logo rise" style="left:5cqw;top:6cqw;font-size:5.2cqw">PÉRIHÉLIE<div class="bar" style="width:19cqw"></div><div class="ver">Minecraft 1.21.1 · Fabric</div></div>
+    <div data-arc style="position:absolute;inset:0"></div>
+    <div class="foot" style="left:5cqw">Périhélie 1.2.0</div>
+  </div>
+</div>
+
+<div class="concept">
+  <h3><b>Titre C</b>Carte stellaire</h3>
+  <p>Une galaxie spirale tourne en fond, comme sur la carte des étoiles du mod. Chaque bouton est un repère du HUD posé sur une étoile, avec son nom et sa « distance ». Au survol, le repère se verrouille. <i>Animé : galaxie en rotation, repères qui pulsent, verrouillage au survol.</i></p>
+  <div class="screen" data-scene="carte">
+    <canvas class="fill" data-draw="galaxy"></canvas>
+    <div class="logo rise" style="left:50%;top:5cqw;transform:translateX(-50%);font-size:4.6cqw;text-align:center">PÉRIHÉLIE<div class="bar" style="width:16cqw;margin:1.1cqw auto 0"></div></div>
+    <div data-markers style="position:absolute;inset:0"></div>
+    <div class="foot" style="left:50%;transform:translateX(-50%)">Survolez un repère · Périhélie 1.2.0</div>
+  </div>
+</div>
+
+<!-- ================================================================== MENU PAUSE -->
+<h2 id="pause">Menu pause<small>Il s'ouvre par-dessus le jeu, flouté. Les actions restent celles de Minecraft.</small></h2>
+
+<div class="concept">
+  <h3><b>Pause A</b>Panneau latéral</h3>
+  <p>Le panneau glisse depuis la gauche avec les actions. À droite, une carte « état de bord » : où tu es, ton vaisseau, sa coque, son ergol et ton temps de jeu. Une petite orbite animée montre ta position. <i>Animé : entrée du panneau, jauges qui se remplissent, orbite.</i></p>
+  <div class="screen" data-scene="pauseA">
+    <img class="photo blur" src="../images/6_terminator_sky.jpg" alt="">
+    <div class="panel slidein" style="left:0;top:0;bottom:0;width:30cqw;clip-path:none;padding:5cqw 3cqw">
+      <div class="title">Pause</div><div class="line"></div>
+      <div class="btn on">Reprendre<span class="k">Échap</span></div>
+      <div class="btn">Progrès</div>
+      <div class="btn">Statistiques</div>
+      <div class="btn">Réglages Périhélie</div>
+      <div class="btn">Options</div>
+      <div class="btn small">Ouvrir au réseau local</div>
+      <div class="btn small orange">Sauvegarder et quitter</div>
+    </div>
+    <div class="panel rise" style="right:4cqw;top:6cqw;width:30cqw;padding:2.2cqw 2.4cqw;animation-delay:.3s">
+      <div class="label">Position</div><div class="big">Orbite terrestre</div>
+      <div style="color:var(--soft);margin-bottom:1.2cqw">Système Sol · Étoile jaune</div>
+      <canvas data-draw="miniorbit" style="width:100%;aspect-ratio:2.6"></canvas>
+      <div class="label" style="margin-top:1cqw">Vaisseau</div><div class="big" style="font-size:1.7cqw">Capsule Alizé</div>
+      <div class="label" style="margin-top:.8cqw">Coque</div><div class="gauge"><i data-fill="0.86"></i></div>
+      <div class="label">Ergol</div><div class="gauge o"><i data-fill="0.62"></i></div>
+      <div style="display:flex;justify-content:space-between" class="label"><span>Temps de jeu</span><span style="color:var(--white)">14 h 32</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="concept">
+  <h3><b>Pause B</b>Console de bord</h3>
+  <p>Le jeu se fige derrière une console au centre. En haut, la télémétrie du vaisseau, comme dans le HUD. En dessous, six grandes tuiles avec icône. En bas, un conseil du guide du mod qui change. <i>Animé : télémétrie qui défile, tuiles qui s'éclairent, conseils.</i></p>
+  <div class="screen" data-scene="pauseB">
+    <img class="photo blur" src="../images/1_shuttle_black_hole.jpg" alt="">
+    <div class="panel rise" style="left:50%;top:50%;transform:translate(-50%,-50%);width:58cqw;padding:2.4cqw 2.8cqw">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div><div class="title">Vaisseau en pause</div><div class="line"></div></div>
+        <div class="label" data-clock>Système Khaos · trou noir</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2cqw;margin-bottom:1.6cqw" data-telemetry></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1cqw" data-tiles></div>
+      <div style="margin-top:1.6cqw;color:var(--soft);font-size:1.1cqw;min-height:1.6em" data-tip></div>
+    </div>
+  </div>
+</div>
+
+<div class="concept">
+  <h3><b>Pause C</b>Hologramme</h3>
+  <p>Ton vaisseau projeté en hologramme au centre, avec des lignes de balayage, qui tourne lentement. Les actions sont posées en arc autour de lui. C'est le plus spectaculaire des trois. <i>Animé : vaisseau en fil de fer qui tourne, balayage, scintillement.</i></p>
+  <div class="screen" data-scene="pauseC">
+    <img class="photo blur" src="../images/19_dyson.jpg" alt="">
+    <canvas class="fill" data-draw="holo"></canvas>
+    <div data-ring style="position:absolute;inset:0"></div>
+  </div>
+</div>
+
+<!-- ================================================================== AUTRES MENUS -->
+<h2 id="autres">Les autres menus<small>Chargement, choix du monde, options, mort. Ils prendraient le style choisi plus haut ; voici des idées pour chacun.</small></h2>
+
+<div class="concept">
+  <h3><b>Chargement 1</b>Saut hyperespace</h3>
+  <p>Pendant le chargement d'un monde ou une connexion, on traverse l'hyperespace comme pendant un saut du mod. La barre de progression est cyan, avec l'étape en cours et un conseil. <i>Animé : tunnel d'étoiles, progression, étapes.</i></p>
+  <div class="screen"><canvas class="fill" data-draw="hyper"></canvas>
+    <div style="position:absolute;left:50%;bottom:7cqw;transform:translateX(-50%);width:46cqw;text-align:center">
+      <div class="title" style="font-size:1.5cqw" data-step>Préparation du monde</div>
+      <div class="gauge" style="height:.45cqw;margin:1cqw 0"><i data-progress></i></div>
+      <div class="label" data-pct>0 %</div>
+    </div>
+    <div class="logo" style="left:50%;top:6cqw;transform:translateX(-50%);font-size:3cqw">PÉRIHÉLIE</div>
+  </div>
+</div>
+
+<div class="concept">
+  <h3><b>Chargement 2</b>Approche planétaire</h3>
+  <p>Variante plus calme : une planète grossit lentement pendant qu'on « arrive » et la barre fait le tour de la planète. Pour les entrées dans une dimension (Lune, Mars…), elle prendrait les couleurs de la destination. <i>Animé : approche, anneau de progression.</i></p>
+  <div class="screen"><canvas class="fill" data-draw="approach"></canvas>
+    <div style="position:absolute;left:50%;bottom:4cqw;transform:translateX(-50%);text-align:center">
+      <div class="label">Entrée dans</div><div class="big">Mars</div></div>
+  </div>
+</div>
+
+<div class="concept">
+  <h3><b>Mondes</b>Choisir un monde</h3>
+  <p>Chaque monde est une carte avec une planète miniature qui tourne, le dernier système visité, le vaisseau, et la date. Les boutons du bas restent ceux de Minecraft, restylés. <i>Animé : planètes miniatures, sélection.</i></p>
+  <div class="screen">
+    <img class="photo blur" src="../images/4_moon_walk.jpg" alt="">
+    <div style="position:absolute;left:8cqw;right:8cqw;top:4cqw"><div class="title">Choisir un monde</div><div class="line"></div></div>
+    <div data-worlds style="position:absolute;left:8cqw;right:8cqw;top:10cqw;display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw"></div>
+    <div style="position:absolute;left:8cqw;right:8cqw;bottom:3cqw;display:flex;gap:1cqw">
+      <div class="btn on" style="flex:1">Jouer</div><div class="btn" style="flex:1">Nouveau monde</div><div class="btn small" style="flex:.6">Modifier</div><div class="btn small orange" style="flex:.6">Retour</div></div>
+  </div>
+</div>
+
+<div class="concept">
+  <h3><b>Options</b>Réglages</h3>
+  <p>Les options de Minecraft dans un panneau à onglets. Les curseurs et les interrupteurs sont redessinés comme les jauges du HUD. Les réglages du mod deviennent un onglet comme les autres. <i>Animé : curseurs, interrupteurs, onglet actif.</i></p>
+  <div class="screen">
+    <img class="photo blur" src="../images/5_alize_disk.jpg" alt="">
+    <div class="panel" style="left:10cqw;right:10cqw;top:5cqw;bottom:11cqw;padding:2.4cqw 3cqw">
+      <div class="title">Options</div><div class="line"></div>
+      <div data-tabs style="display:flex;gap:.6cqw;margin-bottom:1.6cqw"></div>
+      <div data-sliders style="display:grid;grid-template-columns:1fr 1fr;gap:1.2cqw 3cqw"></div>
+      <div class="label" style="margin-top:2.4cqw;color:var(--soft);letter-spacing:.08em;text-transform:none;font-size:1.05cqw">Survolez un curseur pour le régler, cliquez un interrupteur.</div>
+    </div>
+    <div style="position:absolute;left:10cqw;right:10cqw;bottom:4cqw;display:flex;gap:1cqw;justify-content:flex-end">
+      <div class="btn small" style="width:16cqw">Par défaut</div><div class="btn on" style="width:20cqw">Terminé</div></div>
+  </div>
+</div>
+
+<div class="concept">
+  <h3><b>Mort</b>Signal perdu</h3>
+  <p>À la mort, l'image se brouille comme une transmission coupée. Le texte « Signal perdu » donne la cause (« englouti par un trou noir », « vide spatial »…). Deux boutons pour réapparaître ou quitter. <i>Animé : parasites, coupures, clignotement.</i></p>
+  <div class="screen"><img class="photo" src="../images/12_apeiron.jpg" alt="" style="filter:saturate(.3) brightness(.4) hue-rotate(-20deg)">
+    <canvas class="fill" data-draw="static"></canvas>
+    <div style="position:absolute;left:50%;top:22cqw;transform:translateX(-50%);text-align:center;width:60cqw">
+      <div class="title" style="font-size:4cqw;color:var(--red);letter-spacing:.3em" data-glitch>Signal perdu</div>
+      <div style="color:var(--soft);font-size:1.4cqw;margin:1cqw 0 3cqw">Votre vaisseau a franchi l'horizon d'Apeiron.</div>
+      <div style="display:flex;gap:1.2cqw;justify-content:center"><div class="btn on" style="width:18cqw">Réapparaître</div><div class="btn orange" style="width:18cqw">Écran titre</div></div>
+      <div class="label" style="margin-top:2cqw">Score : 1 240 · Dernière position : système Apeiron</div>
+    </div>
+  </div>
+</div>
+
+<p style="margin-top:60px;color:var(--dim)">Concepts animés en HTML pour choisir. En jeu, ils seraient dessinés avec le moteur d'interface du mod et ses polices.</p>
+</div>
+
+<script>
+/* ------------------------------------------------------------------ outils */
+const TAU = Math.PI * 2;
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+function fit(c) {
+  const r = c.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1);
+  const w = Math.max(1, Math.round(r.width * d)), h = Math.max(1, Math.round(r.height * d));
+  if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+  return [w, h];
+}
+const draws = [];
+function on(el, f) { draws.push({ el, f, visible: false, state: {} }); }
+
+/* étoiles fixes qui scintillent */
+function starfield(state, w, h, n, seed) {
+  if (!state.stars || state.w !== w) {
+    const r = rng(seed); state.w = w;
+    state.stars = Array.from({ length: n }, () => ({ x: r() * w, y: r() * h, s: Math.pow(r(), 3) * 2.2 + .3, p: r() * TAU, c: r() }));
+  }
+  return state.stars;
+}
+function drawStars(g, stars, t, k = 1) {
+  for (const s of stars) {
+    const a = (.55 + .45 * Math.sin(t * 1.7 + s.p)) * k;
+    g.fillStyle = s.c > .85 ? `rgba(255,200,150,${a})` : s.c > .7 ? `rgba(170,210,255,${a})` : `rgba(255,255,255,${a})`;
+    g.fillRect(s.x, s.y, s.s, s.s);
+    if (s.s > 2) { g.fillStyle = `rgba(255,255,255,${a * .25})`; g.fillRect(s.x - s.s * 2, s.y + s.s / 2 - .5, s.s * 5, 1); g.fillRect(s.x + s.s / 2 - .5, s.y - s.s * 2, 1, s.s * 5); }
+  }
+}
+
+/* texture de planète : bruit de valeur, enroulé en longitude */
+function planetTexture(seed, palette) {
+  const W = 512, H = 256, r = rng(seed), grid = [];
+  const G = 32; for (let i = 0; i < G * G; i++) grid.push(r());
+  const vn = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+    const at = (a, b) => grid[((b % G + G) % G) * G + ((a % G + G) % G)];
+    const sx = xf * xf * (3 - 2 * xf), sy = yf * yf * (3 - 2 * yf);
+    return (at(xi, yi) * (1 - sx) + at(xi + 1, yi) * sx) * (1 - sy) + (at(xi, yi + 1) * (1 - sx) + at(xi + 1, yi + 1) * sx) * sy; };
+  const tex = new Uint8ClampedArray(W * H * 3);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    let n = 0, a = .5, f = 4;
+    for (let o = 0; o < 5; o++) { n += vn(x / W * f * (G / 8), y / H * f * (G / 16)) * a; a *= .5; f *= 2; }
+    const lat = Math.abs(y / H - .5) * 2;
+    const c = palette(n, lat);
+    const i = (y * W + x) * 3; tex[i] = c[0]; tex[i + 1] = c[1]; tex[i + 2] = c[2];
+  }
+  return { W, H, tex };
+}
+const earth = (n, lat) => lat > .95 ? [225, 232, 240] : n > .53 ? (n > .62 ? [120, 110, 80] : [60, 120, 60]) : [20, 60, 130 + n * 60];
+const mars = (n, lat) => lat > .88 ? [240, 230, 225] : [150 + n * 90, 70 + n * 40, 40 + n * 20];
+const textures = {};
+function tex(name) { return textures[name] || (textures[name] = planetTexture(name.length * 991 + 7, name === 'mars' ? mars : earth)); }
+
+/* sphère éclairée, dessinée pixel par pixel dans une petite image, puis agrandie */
+function sphere(g, cx, cy, R, t, name, light = [-.6, -.35, .7], cloud = true) {
+  const S = R > 120 ? 320 : 160, img = (sphere['img' + S] ||= new ImageData(S, S)), d = img.data, T = tex(name);
+  const L = Math.hypot(...light), lx = light[0] / L, ly = light[1] / L, lz = light[2] / L;
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    const nx = (x + .5) / S * 2 - 1, ny = (y + .5) / S * 2 - 1, rr = nx * nx + ny * ny, i = (y * S + x) * 4;
+    if (rr > 1) { d[i + 3] = 0; continue; }
+    const nz = Math.sqrt(1 - rr);
+    const lon = Math.atan2(nx, nz) + t * .05, lat = Math.asin(ny);
+    const u = ((lon / TAU % 1) + 1) % 1, v = lat / Math.PI + .5;
+    const ti = (Math.floor(v * (T.H - 1)) * T.W + Math.floor(u * (T.W - 1))) * 3;
+    let r = T.tex[ti], gg = T.tex[ti + 1], b = T.tex[ti + 2];
+    if (cloud) { const cu = ((u + t * .004) % 1), cv = v; const ci = (Math.floor(cv * (T.H - 1)) * T.W + Math.floor(cu * (T.W - 1)) * 1) * 3;
+      const cl = Math.max(0, (T.tex[(ci + 97 * 3) % T.tex.length] - 150) / 105) * .8; r += (255 - r) * cl; gg += (255 - gg) * cl; b += (255 - b) * cl; }
+    const lit = Math.max(0, nx * lx + ny * ly + nz * lz);
+    const k = .06 + .94 * Math.pow(lit, .8), rim = Math.pow(1 - nz, 3) * .7 * (lit > 0 ? 1 : .15);
+    d[i] = r * k + 90 * rim; d[i + 1] = gg * k + 150 * rim; d[i + 2] = b * k + 255 * rim; d[i + 3] = 255;
+    if (lit === 0 && name === 'earth') { const city = T.tex[ti] > 100 && T.tex[ti + 1] > 100 && (x * 7 + y * 13) % 11 === 0; if (city) { d[i] = 255; d[i + 1] = 200; d[i + 2] = 120; } }
+  }
+  const off = (sphere['off' + S] ||= Object.assign(document.createElement('canvas'), { width: S, height: S }));
+  off.getContext('2d').putImageData(img, 0, 0);
+  // halo d'atmosphère
+  const halo = g.createRadialGradient(cx, cy, R * .9, cx, cy, R * 1.25);
+  halo.addColorStop(0, name === 'mars' ? 'rgba(255,150,100,.35)' : 'rgba(110,180,255,.45)'); halo.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = halo; g.beginPath(); g.arc(cx, cy, R * 1.25, 0, TAU); g.fill();
+  g.imageSmoothingEnabled = true; g.drawImage(off, cx - R, cy - R, R * 2, R * 2);
+}
+
+/* ------------------------------------------------------------------ scènes */
+document.querySelectorAll('[data-draw="twinkle"]').forEach(c => on(c, (g, w, h, t, st) => {
+  g.clearRect(0, 0, w, h);
+  drawStars(g, starfield(st, w, h, 160, 3), t, .8);
+  const p = (t % 9) / 9; if (p < .18) {           // une étoile filante
+    const q = p / .18, x = w * (.55 + q * .4), y = h * (.12 + q * .22);
+    const grd = g.createLinearGradient(x, y, x - w * .12, y - h * .06); grd.addColorStop(0, 'rgba(255,255,255,.9)'); grd.addColorStop(1, 'rgba(255,255,255,0)');
+    g.strokeStyle = grd; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y); g.lineTo(x - w * .12, y - h * .06); g.stroke();
+  }
+}));
+
+document.querySelectorAll('[data-draw="orbit"]').forEach(c => on(c, (g, w, h, t, st) => {
+  const bg = g.createLinearGradient(0, 0, 0, h); bg.addColorStop(0, '#050812'); bg.addColorStop(1, '#0b1630');
+  g.fillStyle = bg; g.fillRect(0, 0, w, h);
+  const neb = g.createRadialGradient(w * .2, h * .3, 0, w * .2, h * .3, w * .5); neb.addColorStop(0, 'rgba(120,70,160,.25)'); neb.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = neb; g.fillRect(0, 0, w, h);
+  drawStars(g, starfield(st, w, h, 260, 11), t);
+  const R = w * .36, cx = w * .42, cy = h + R * .45;
+  // orbite et vaisseau : derrière puis devant la planète
+  const a = t * .25, ex = R * 1.55, ey = R * .32, oy = cy - R * .95;
+  const pos = th => [cx + Math.cos(th) * ex, oy + Math.sin(th) * ey];
+  g.strokeStyle = 'rgba(107,228,242,.25)'; g.lineWidth = Math.max(1, w / 900); g.setLineDash([w / 180, w / 120]);
+  g.beginPath(); g.ellipse(cx, oy, ex, ey, 0, Math.PI, TAU); g.stroke(); g.setLineDash([]);
+  const behind = Math.sin(a) < 0;
+  const ship = () => { const [x, y] = pos(a); const trail = g.createLinearGradient(...pos(a - .5), x, y); trail.addColorStop(0, 'rgba(107,228,242,0)'); trail.addColorStop(1, 'rgba(107,228,242,.8)');
+    g.strokeStyle = trail; g.lineWidth = w / 500; g.beginPath(); for (let k = 0; k <= 20; k++) { const p = pos(a - .5 + k / 40); k ? g.lineTo(...p) : g.moveTo(...p); } g.stroke();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(x, y, w / 320, 0, TAU); g.fill();
+    g.font = `700 ${w / 90}px Rajdhani`; g.fillStyle = 'rgba(107,228,242,.9)'; g.fillText('ALIZÉ', x + w / 120, y - w / 120); };
+  if (behind) ship();
+  sphere(g, cx, cy, R, t, 'earth', [-.2, -.75, .6]);
+  if (!behind) ship();
+  g.setLineDash([w / 180, w / 120]); g.strokeStyle = 'rgba(107,228,242,.25)';
+  g.beginPath(); g.ellipse(cx, oy, ex, ey, 0, 0, Math.PI); g.stroke(); g.setLineDash([]);
+  // l'arc du menu, comme les jauges du HUD
+  const ax = w * .99, ay = h * .5, ar = h * .42;
+  g.strokeStyle = 'rgba(107,228,242,.18)'; g.lineWidth = w / 300; g.beginPath(); g.arc(ax, ay, ar, Math.PI * .62, Math.PI * 1.38); g.stroke();
+  const sel = st.sel ?? 0, lit = Math.PI * 1.38 - (sel + .5) / 5 * Math.PI * .76;
+  g.strokeStyle = '#6be4f2'; g.shadowColor = '#6be4f2'; g.shadowBlur = w / 80;
+  g.beginPath(); g.arc(ax, ay, ar, lit - .08, lit + .08); g.stroke(); g.shadowBlur = 0;
+}));
+// les boutons posés sur l'arc
+document.querySelectorAll('[data-scene="orbite"] [data-arc]').forEach(box => {
+  const items = ['Solo', 'Multijoueur', 'Royaumes', 'Options', 'Quitter'];
+  items.forEach((name, i) => {
+    const th = Math.PI * 1.38 - (i + .5) / 5 * Math.PI * .76;
+    const x = 99 + Math.cos(th) * 42 * 9 / 16 * 1.0, y = 50 + Math.sin(th) * 42;
+    const b = document.createElement('div'); b.className = 'btn' + (i === 0 ? ' on' : '') + (i === 4 ? ' orange' : '');
+    b.textContent = name; Object.assign(b.style, { position: 'absolute', right: (100 - x + 1.5) + 'cqw', top: `calc(${y}% - 1.7cqw)`, width: '17cqw' });
+    b.style.right = `calc(${100 - x}cqw + 1.5cqw)`;
+    b.onmouseenter = () => { box.querySelectorAll('.btn').forEach(o => o.classList.remove('on')); b.classList.add('on'); draws.find(d => d.el.closest('.screen') === box.closest('.screen')).state.sel = i; };
+    box.appendChild(b);
+  });
+});
+
+document.querySelectorAll('[data-draw="galaxy"]').forEach(c => on(c, (g, w, h, t, st) => {
+  if (!st.pts || st.w !== w) {
+    const r = rng(5); st.w = w; st.pts = [];
+    for (let i = 0; i < 4200; i++) {
+      const arm = i % 3, d = Math.pow(r(), .7), th = arm / 3 * TAU + d * 5.2 + (r() - .5) * .55 * (1.2 - d);
+      st.pts.push({ d, th, z: (r() - .5) * .08 * (1 - d), c: r(), s: r() < .04 ? 2.2 : 1 });
+    }
+  }
+  g.fillStyle = '#03040a'; g.fillRect(0, 0, w, h);
+  drawStars(g, starfield(st, w, h, 140, 17), t, .6);
+  const cx = w * .5, cy = h * .56, R = w * .42, tilt = .42;
+  g.save(); g.translate(cx, cy); g.scale(1, tilt * 1.4);
+  const core = g.createRadialGradient(0, 0, 0, 0, 0, R * .4); core.addColorStop(0, 'rgba(255,236,200,.75)'); core.addColorStop(.25, 'rgba(255,200,150,.3)'); core.addColorStop(1, 'rgba(255,190,150,0)');
+  g.fillStyle = core; g.beginPath(); g.arc(0, 0, R * .4, 0, TAU); g.fill(); g.restore();
+  for (const p of st.pts) {
+    const a = p.th - t * .03 / (p.d + .25);
+    const x = cx + Math.cos(a) * p.d * R, y = cy + Math.sin(a) * p.d * R * tilt + p.z * R;
+    const k = 1 - p.d * .6;
+    g.fillStyle = p.c > .8 ? `rgba(160,200,255,${.75 * k})` : p.c > .6 ? `rgba(255,190,150,${.7 * k})` : `rgba(230,225,255,${.55 * k})`;
+    g.fillRect(x, y, p.s * w / 1200, p.s * w / 1200);
+  }
+  st.cx = cx; st.cy = cy; st.R = R; st.tilt = tilt;
+}));
+document.querySelectorAll('[data-scene="carte"] [data-markers]').forEach(box => {
+  const items = [['Solo', 'Système Sol · 0 al', -.32, .1], ['Multijoueur', '13 galaxies · en ligne', .36, -.06], ['Royaumes', 'Serveurs Minecraft', -.12, .52],
+    ['Options', 'Réglages de bord', .42, .44], ['Quitter', 'Retour sur Terre', -.6, .5]];
+  items.forEach(([name, sub, x, y], i) => {
+    const m = document.createElement('div');
+    m.style.cssText = `position:absolute;left:${50 + x * 42}%;top:${56 + y * 30}%;transform:translate(-50%,-50%);cursor:pointer;text-align:left`;
+    m.innerHTML = `<svg viewBox="-20 -20 40 40" style="width:3.2cqw;display:block;margin:0 auto;overflow:visible">
+      <g class="lock" style="transition:transform .3s;transform:scale(1.6);opacity:.0"><path d="M-14 -8V-14H-8M8 -14H14V-8M14 8V14H8M-8 14H-14V8" fill="none" stroke="#6be4f2" stroke-width="2"/></g>
+      <path d="M0 -7L7 0L0 7L-7 0Z" fill="${i === 4 ? '#ff9f45' : '#6be4f2'}" opacity=".9"><animate attributeName="opacity" values=".5;1;.5" dur="${2 + i * .3}s" repeatCount="indefinite"/></path>
+      <circle r="11" fill="none" stroke="${i === 4 ? '#ff9f45' : '#6be4f2'}" stroke-width="1" opacity=".35"><animate attributeName="r" values="8;16" dur="2.4s" begin="${i * .4}s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;0" dur="2.4s" begin="${i * .4}s" repeatCount="indefinite"/></circle></svg>
+      <div style="font-weight:700;font-size:1.5cqw;letter-spacing:.14em;text-transform:uppercase;text-align:center">${name}</div>
+      <div style="font-size:.95cqw;color:#7390a0;letter-spacing:.12em;text-align:center">${sub}</div>`;
+    const lock = m.querySelector('.lock');
+    m.onmouseenter = () => { lock.style.opacity = 1; lock.style.transform = 'scale(1)'; };
+    m.onmouseleave = () => { lock.style.opacity = 0; lock.style.transform = 'scale(1.6)'; };
+    box.appendChild(m);
+  });
+});
+
+document.querySelectorAll('[data-draw="miniorbit"]').forEach(c => on(c, (g, w, h, t) => {
+  g.clearRect(0, 0, w, h);
+  g.fillStyle = 'rgba(107,228,242,.05)'; g.fillRect(0, 0, w, h);
+  g.strokeStyle = 'rgba(107,228,242,.12)'; g.lineWidth = 1;
+  for (let x = 0; x < w; x += w / 12) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
+  for (let y = 0; y < h; y += h / 5) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+  const cx = w * .5, cy = h * .5, R = h * .22;
+  const gr = g.createRadialGradient(cx - R * .3, cy - R * .3, 0, cx, cy, R); gr.addColorStop(0, '#5aa0ff'); gr.addColorStop(1, '#0d2a5a');
+  g.fillStyle = gr; g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.fill();
+  g.strokeStyle = 'rgba(107,228,242,.5)'; g.setLineDash([4, 4]); g.beginPath(); g.ellipse(cx, cy, w * .36, h * .36, -.15, 0, TAU); g.stroke(); g.setLineDash([]);
+  const a = t * .5, x = cx + Math.cos(a) * w * .36 * Math.cos(-.15) - Math.sin(a) * h * .36 * Math.sin(-.15), y = cy + Math.cos(a) * w * .36 * Math.sin(-.15) + Math.sin(a) * h * .36 * Math.cos(-.15);
+  g.fillStyle = '#ff9f45'; g.beginPath(); g.arc(x, y, h * .05, 0, TAU); g.fill();
+  g.strokeStyle = 'rgba(255,159,69,.5)'; g.beginPath(); g.arc(x, y, h * (.08 + (t % 1) * .08), 0, TAU); g.stroke();
+}));
+
+// console de bord : télémétrie, tuiles, conseils
+document.querySelectorAll('[data-telemetry]').forEach(box => {
+  [['Vitesse', 'm/s', 0], ['Distance', 'km', 1], ['Coque', '%', 2]].forEach(([l, u, i]) => {
+    const d = document.createElement('div'); d.innerHTML = `<div class="label">${l}</div><div class="big"><span data-tel="${i}">0</span> <span style="font-size:.5em;color:var(--dim)">${u}</span></div><div class="gauge"><i data-tg="${i}"></i></div>`; box.appendChild(d);
+  });
+});
+const ICONS = { play: 'M-6 -8L8 0L-6 8Z', star: 'M0 -9L2.5 -3L9 -3L4 1L6 8L0 4L-6 8L-4 1L-9 -3L-2.5 -3Z', chart: 'M-8 8V-2H-4V8M-2 8V-8H2V8M4 8V2H8V8',
+  gear: 'M0 -9L3 -5L8 -5L6 0L8 5L3 5L0 9L-3 5L-8 5L-6 0L-8 -5L-3 -5Z', net: 'M-8 0H8M0 -8V8M-6 -6L6 6M6 -6L-6 6', exit: 'M-8 -8H2V-4M2 4V8H-8ZM0 0H9M5 -4L9 0L5 4' };
+document.querySelectorAll('[data-tiles]').forEach(box => {
+  [['Reprendre', 'play'], ['Progrès', 'star'], ['Statistiques', 'chart'], ['Options', 'gear'], ['Réseau local', 'net'], ['Sauver et quitter', 'exit']].forEach(([n, ic], i) => {
+    const d = document.createElement('div'); d.className = 'btn' + (i === 0 ? ' on' : '') + (i === 5 ? ' orange' : '');
+    Object.assign(d.style, { height: '6.6cqw', flexDirection: 'column', justifyContent: 'center', gap: '.5cqw', margin: 0, fontSize: '1.15cqw' });
+    d.innerHTML = `<svg viewBox="-10 -10 20 20" style="width:2.2cqw"><path d="${ICONS[ic]}" fill="none" stroke="${i === 5 ? '#ff9f45' : '#6be4f2'}" stroke-width="1.6" stroke-linejoin="round"/></svg>${n}`;
+    box.appendChild(d);
+  });
+});
+const TIPS = ['Conseil : la croisière s’ouvre loin des astres, quand la poussée reste continue.', 'Conseil : un trou noir ne pardonne pas ; surveillez l’horizon sur le HUD.',
+  'Conseil : le chantier naval construit les grands vaisseaux étape par étape.', 'Conseil : les Anciens ne se battent que si on les provoque.'];
+
+// hologramme : un vaisseau en fil de fer qui tourne
+const SHIP = (() => {           // une capsule : un fuseau de cercles, deux nacelles, une antenne
+  const P = [], E = [];
+  const ring = (z, r, n, dx = 0, dy = 0) => { const s = P.length; for (let i = 0; i < n; i++) { const a = i / n * TAU; P.push([dx + Math.cos(a) * r, dy + Math.sin(a) * r * .8, z]); E.push([s + i, s + (i + 1) % n]); } return s; };
+  const prof = [[-1.1, .15], [-.8, .45], [-.3, .62], [.3, .62], [.8, .5], [1.0, .3]];
+  let prev = -1;
+  for (const [z, r] of prof) { const s = ring(z, r, 12); if (prev >= 0) for (let i = 0; i < 12; i += 2) E.push([prev + i, s + i]); prev = s; }
+  for (const sx of [-1, 1]) { let p2 = -1; for (const z of [-.3, .2, .7]) { const s = ring(z, .2, 8, sx * .95, -.1); if (p2 >= 0) for (let i = 0; i < 8; i += 2) E.push([p2 + i, s + i]); p2 = s; }
+    const a = P.length; P.push([sx * .55, 0, 0], [sx * .78, -.05, 0]); E.push([a, a + 1]); }
+  const a = P.length; P.push([0, -.5, -.2], [0, -1.05, -.35]); E.push([a, a + 1]);
+  return { P, E };
+})();
+document.querySelectorAll('[data-draw="holo"]').forEach(c => on(c, (g, w, h, t) => {
+  g.clearRect(0, 0, w, h);
+  const cx = w * .5, cy = h * .47, S = h * .26, a = t * .4, tilt = .35;
+  const base = g.createRadialGradient(cx, h * .8, 0, cx, h * .8, w * .2); base.addColorStop(0, 'rgba(107,228,242,.35)'); base.addColorStop(1, 'rgba(107,228,242,0)');
+  g.fillStyle = base; g.beginPath(); g.ellipse(cx, h * .8, w * .2, h * .045, 0, 0, TAU); g.fill();
+  const cone = g.createLinearGradient(0, h * .8, 0, h * .2); cone.addColorStop(0, 'rgba(107,228,242,.16)'); cone.addColorStop(1, 'rgba(107,228,242,0)');
+  g.fillStyle = cone; g.beginPath(); g.moveTo(cx - w * .03, h * .8); g.lineTo(cx - w * .2, h * .15); g.lineTo(cx + w * .2, h * .15); g.lineTo(cx + w * .03, h * .8); g.fill();
+  const pr = ([x, y, z]) => { const X = x * Math.cos(a) + z * Math.sin(a), Z = -x * Math.sin(a) + z * Math.cos(a); const Y = y * Math.cos(tilt) - Z * Math.sin(tilt), Z2 = y * Math.sin(tilt) + Z * Math.cos(tilt); const p = 3 / (3 + Z2); return [cx + X * S * p, cy + Y * S * p, Z2]; };
+  const flick = .8 + .2 * Math.sin(t * 23) * Math.sin(t * 7);
+  g.lineWidth = Math.max(1, w / 900); g.shadowColor = '#6be4f2'; g.shadowBlur = w / 160;
+  for (const [i, j] of SHIP.E) { const p = pr(SHIP.P[i]), q = pr(SHIP.P[j]); const k = .35 + .65 * (1 - (p[2] + q[2] + 2.2) / 4.4);
+    g.strokeStyle = `rgba(107,228,242,${k * flick})`; g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(q[0], q[1]); g.stroke(); }
+  g.shadowBlur = 0;
+  const sy = (t * .35 % 1) * h * .7 + h * .12;       // balayage
+  const sg = g.createLinearGradient(0, sy - h * .02, 0, sy + h * .02); sg.addColorStop(0, 'rgba(107,228,242,0)'); sg.addColorStop(.5, 'rgba(107,228,242,.25)'); sg.addColorStop(1, 'rgba(107,228,242,0)');
+  g.fillStyle = sg; g.fillRect(cx - w * .22, sy - h * .02, w * .44, h * .04);
+  g.font = `700 ${w / 70}px Rajdhani`; g.fillStyle = 'rgba(107,228,242,.9)'; g.textAlign = 'center';
+  g.fillText('CAPSULE ALIZÉ', cx, h * .9); g.font = `500 ${w / 110}px Rajdhani`; g.fillStyle = 'rgba(180,200,210,.8)';
+  g.fillText('COQUE 86 %  ·  ERGOL 62 %  ·  SYSTÈME SOL', cx, h * .94); g.textAlign = 'left';
+}));
+document.querySelectorAll('[data-scene="pauseC"] [data-ring]').forEach(box => {
+  const items = ['Reprendre', 'Progrès', 'Statistiques', 'Options', 'Réseau local', 'Sauver et quitter'];
+  items.forEach((n, i) => {
+    const left = i < 3, k = i % 3, y = 26 + k * 16, x = left ? 7 + (k === 1 ? -2 : 1) : 70 + (k === 1 ? 2 : -1);
+    const d = document.createElement('div'); d.className = 'btn' + (i === 0 ? ' on' : '') + (i === 5 ? ' orange' : '');
+    Object.assign(d.style, { position: 'absolute', left: x + 'cqw', top: y + '%', width: '22cqw' }); d.textContent = n; box.appendChild(d);
+  });
+});
+
+document.querySelectorAll('[data-draw="hyper"]').forEach(c => on(c, (g, w, h, t, st) => {
+  if (!st.s) { const r = rng(9); st.s = Array.from({ length: 500 }, () => ({ a: r() * TAU, z: r(), c: r() })); }
+  g.fillStyle = 'rgba(2,4,12,.55)'; g.fillRect(0, 0, w, h);
+  const cx = w / 2, cy = h * .45;
+  const glow = g.createRadialGradient(cx, cy, 0, cx, cy, w * .25); glow.addColorStop(0, 'rgba(120,180,255,.25)'); glow.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = glow; g.fillRect(0, 0, w, h);
+  for (const s of st.s) {
+    s.z -= .012; if (s.z <= .02) s.z += 1;
+    const r1 = w * .03 / s.z, r2 = w * .03 / (s.z + .05);
+    const x1 = cx + Math.cos(s.a) * r1, y1 = cy + Math.sin(s.a) * r1, x2 = cx + Math.cos(s.a) * r2, y2 = cy + Math.sin(s.a) * r2;
+    g.strokeStyle = s.c > .7 ? `rgba(160,140,255,${1 - s.z})` : `rgba(150,220,255,${1 - s.z})`; g.lineWidth = (1 - s.z) * w / 500;
+    g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke();
+  }
+  const box = c.closest('.screen'), p = (t % 12) / 12;
+  const steps = ['Préparation du monde', 'Génération des tronçons', 'Calcul des orbites', 'Allumage des moteurs', 'Sortie d’hyperespace'];
+  box.querySelector('[data-progress]').style.width = (p * 100) + '%';
+  box.querySelector('[data-pct]').textContent = Math.floor(p * 100) + ' %';
+  box.querySelector('[data-step]').textContent = steps[Math.min(4, Math.floor(p * 5))];
+}));
+
+document.querySelectorAll('[data-draw="approach"]').forEach(c => on(c, (g, w, h, t, st) => {
+  g.fillStyle = '#05040a'; g.fillRect(0, 0, w, h);
+  drawStars(g, starfield(st, w, h, 220, 23), t, .8);
+  const p = (t % 14) / 14, R = h * (.12 + .3 * p * p);
+  sphere(g, w / 2, h * .47, R, t * 3, 'mars', [-.5, -.4, .75], false);
+  g.strokeStyle = 'rgba(255,159,69,.2)'; g.lineWidth = w / 400; g.beginPath(); g.arc(w / 2, h * .47, R * 1.35, 0, TAU); g.stroke();
+  g.strokeStyle = '#ff9f45'; g.shadowColor = '#ff9f45'; g.shadowBlur = w / 100;
+  g.beginPath(); g.arc(w / 2, h * .47, R * 1.35, -Math.PI / 2, -Math.PI / 2 + p * TAU); g.stroke(); g.shadowBlur = 0;
+}));
+
+document.querySelectorAll('[data-draw="static"]').forEach(c => on(c, (g, w, h, t, st) => {
+  const S = 160, img = (st.img ||= new ImageData(S, 90)), d = img.data, cut = Math.sin(t * 3) > .93;
+  for (let i = 0; i < d.length; i += 4) { const v = Math.random() * (cut ? 220 : 120); d[i] = v; d[i + 1] = v * .9; d[i + 2] = v; d[i + 3] = cut ? 90 : 22; }
+  const off = (st.off ||= Object.assign(document.createElement('canvas'), { width: S, height: 90 })); off.getContext('2d').putImageData(img, 0, 0);
+  g.clearRect(0, 0, w, h); g.imageSmoothingEnabled = false; g.drawImage(off, 0, 0, w, h);
+  const y = ((t * .4) % 1) * h; g.fillStyle = 'rgba(255,93,82,.12)'; g.fillRect(0, y, w, h * .04);
+  const gl = c.closest('.screen').querySelector('[data-glitch]');
+  gl.style.transform = cut ? `translateX(${(Math.random() - .5) * 1.5}cqw)` : 'none'; gl.style.opacity = cut ? .5 + Math.random() * .5 : 1;
+}));
+
+// mondes : cartes avec planètes miniatures
+document.querySelectorAll('[data-worlds]').forEach(box => {
+  [['Nouvelle Frontière', 'Système Sol · Orbite lunaire', 'Capsule Alizé · 14 h 32', 'earth'], ['Expédition Khaos', 'Galaxie Khaos · trou noir', 'Terminator · 42 h 10', 'mars'],
+   ['Colonie Titan', 'Titan · les trois titans', 'Vaudaire · 8 h 05', 'mars'], ['Créatif', 'Système Sol · Terre', 'Chantier naval · 3 h 40', 'earth']].forEach(([n, a, b, p], i) => {
+    const d = document.createElement('div'); d.className = 'panel' + (i === 0 ? ' on' : '');
+    Object.assign(d.style, { position: 'relative', display: 'flex', gap: '1.4cqw', alignItems: 'center', padding: '1.2cqw 1.6cqw', cursor: 'pointer',
+      background: i === 0 ? 'linear-gradient(180deg, rgba(40,90,110,.7), rgba(12,40,54,.7))' : '' });
+    d.innerHTML = `<canvas style="width:7cqw;height:7cqw" data-mini="${p}"></canvas><div><div style="font-weight:700;font-size:1.5cqw;letter-spacing:.08em">${n}</div>
+      <div style="color:var(--soft);font-size:1.05cqw">${a}</div><div class="label" style="margin-top:.3cqw">${b}</div></div>`;
+    box.appendChild(d);
+  });
+  box.querySelectorAll('[data-mini]').forEach((c, i) => on(c, (g, w, h, t) => { g.clearRect(0, 0, w, h); sphere(g, w / 2, h / 2, w * .38, t * 2 + i * 7, c.dataset.mini, [-.6, -.3, .75], false); }));
+});
+
+// options : onglets, curseurs, interrupteurs
+document.querySelectorAll('[data-tabs]').forEach(box => {
+  ['Général', 'Vidéo', 'Sons', 'Commandes', 'Périhélie', 'Accessibilité'].forEach((n, i) => {
+    const d = document.createElement('div'); d.className = 'btn small' + (i === 4 ? ' on' : ''); d.style.margin = 0; d.style.fontSize = '1cqw'; d.textContent = n;
+    d.onmouseenter = () => { box.querySelectorAll('.btn').forEach(o => o.classList.remove('on')); d.classList.add('on'); }; box.appendChild(d);
+  });
+});
+document.querySelectorAll('[data-sliders]').forEach(box => {
+  [['Opacité du HUD', .8, 's'], ['Taille du HUD', .5, 's'], ['Éclairs à l’écran', .35, 's'], ['Distance des astres', .9, 's'],
+   ['Sons des armes', 1, 't'], ['Ombres des vaisseaux', 0, 't'], ['Guide du pilote', 1, 't'], ['Inverser le tangage', 0, 't']].forEach(([n, v, k], i) => {
+    const d = document.createElement('div');
+    if (k === 's') d.innerHTML = `<div style="display:flex;justify-content:space-between" class="label"><span>${n}</span><span style="color:var(--white)" data-v="${i}">${Math.round(v * 100)} %</span></div>
+      <div class="gauge" style="height:.6cqw;cursor:pointer" data-s="${i}" data-base="${v}"><i style="width:${v * 100}%"></i></div>`;
+    else d.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><span class="label">${n}</span>
+      <span data-t style="width:3.6cqw;height:1.6cqw;border:1px solid var(--cyan-dim);position:relative;cursor:pointer;background:${v ? 'rgba(107,228,242,.25)' : 'transparent'}">
+      <span style="position:absolute;top:.2cqw;left:${v ? 2.1 : .2}cqw;width:1.1cqw;height:1.1cqw;background:${v ? 'var(--cyan)' : 'var(--faint)'};transition:left .25s"></span></span></div>`;
+    box.appendChild(d);
+  });
+  box.querySelectorAll('[data-t]').forEach(s => s.onclick = () => { const on = s.style.background.includes('107'); s.style.background = on ? 'transparent' : 'rgba(107,228,242,.25)';
+    const k = s.firstElementChild; k.style.left = on ? '.2cqw' : '2.1cqw'; k.style.background = on ? 'var(--faint)' : 'var(--cyan)'; });
+  box.querySelectorAll('[data-s]').forEach(s => s.onmousemove = e => { const r = s.getBoundingClientRect(), v = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    s.firstElementChild.style.width = v * 100 + '%'; box.querySelector(`[data-v="${s.dataset.s}"]`).textContent = Math.round(v * 100) + ' %'; });
+});
+
+/* ------------------------------------------------------------------ boucle : seulement ce qui est à l'écran */
+const io = new IntersectionObserver(es => es.forEach(e => { const d = draws.find(x => x.el === e.target); if (d) d.visible = e.isIntersecting; }), { rootMargin: '200px' });
+draws.forEach(d => io.observe(d.el));
+const t0 = performance.now();
+let tipAt = 0, tip = 0;
+function frame(now) {
+  const t = (now - t0) / 1000;
+  for (const d of draws) { if (!d.visible) continue; const [w, h] = fit(d.el); d.f(d.el.getContext('2d'), w, h, t, d.state); }
+  // télémétrie de la console
+  document.querySelectorAll('[data-tel]').forEach(s => { const i = +s.dataset.tel; s.textContent = i === 0 ? Math.round(180 + 40 * Math.sin(t * .7)) : i === 1 ? (4520 + t * 3.1).toFixed(0) : '86'; });
+  document.querySelectorAll('[data-tg]').forEach(s => { const i = +s.dataset.tg; s.style.width = (i === 0 ? 55 + 12 * Math.sin(t * .7) : i === 1 ? 40 + (t * 2) % 60 : 86) + '%'; });
+  if (t > tipAt) { tipAt = t + 4; document.querySelectorAll('[data-tip]').forEach(s => s.textContent = TIPS[tip % TIPS.length]); tip++; }
+  // jauges de la pause A : elles se remplissent quand on arrive dessus
+  document.querySelectorAll('[data-fill]').forEach(s => { s.style.transition = 'width 1.4s cubic-bezier(.2,.8,.2,1)'; s.style.width = (+s.dataset.fill * 100) + '%'; });
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+<style>
+.slidein { animation: slidein 1s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes slidein { from { translate: -100% 0; } to { translate: 0 0; } }
+.panel.on::before { background: linear-gradient(160deg, var(--cyan), rgba(107,228,242,.3)); }
+</style>
+</body>
+</html>
