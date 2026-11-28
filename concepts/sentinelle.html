@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Perihelie : la fin de la Sentinelle</title>
+<link rel="icon" href="../logo.png">
+<style>
+@font-face { font-family: Rajdhani; src: url(fonts/rajdhani_medium.ttf); font-weight: 500; }
+@font-face { font-family: Rajdhani; src: url(fonts/rajdhani_bold.ttf); font-weight: 700; }
+:root { --cyan: #6be4f2; --orange: #ff9f45; --red: #ff5d52; --white: #f2f8fa; --soft: #b4c8d2; --dim: #7390a0; --bg: #07080d; --gold: #d9b565; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--white); font: 500 17px/1.55 Rajdhani, system-ui, sans-serif; }
+.page { max-width: 1140px; margin: 0 auto; padding: 48px 24px 96px; }
+h1 { font-size: 44px; letter-spacing: .18em; margin: 0; font-weight: 700; }
+h1 + .bar { width: 180px; height: 3px; background: var(--orange); margin: 10px 0 18px; }
+.lead { color: var(--soft); max-width: 820px; font-size: 19px; margin: 0 0 8px; }
+.concept { margin: 64px 0 0; }
+.concept h2 { margin: 0 0 4px; font-size: 26px; letter-spacing: .1em; text-transform: uppercase; }
+.concept h2 b { color: var(--orange); margin-right: 12px; }
+.concept p { margin: 0 0 14px; color: var(--soft); max-width: 900px; }
+.frame { position: relative; border: 1px solid #1b2230; border-radius: 6px; overflow: hidden; background: #000; box-shadow: 0 20px 60px rgba(0,0,0,.6); aspect-ratio: 912 / 512; }
+.frame video { display: block; width: 100%; height: 100%; }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 14px; }
+.steps div { padding: 10px 12px; background: #0e131c; border: 1px solid #1b2433; font-size: 15px; color: var(--soft); }
+.steps b { display: block; color: var(--cyan); letter-spacing: .12em; font-size: 13px; text-transform: uppercase; }
+.controls { display: flex; gap: 10px; margin-top: 10px; }
+.controls button { font: 700 13px Rajdhani, sans-serif; letter-spacing: .14em; text-transform: uppercase; padding: 6px 14px; color: var(--cyan);
+  background: #0c1620; border: 1px solid #2f6e7e; cursor: pointer; }
+.controls button:hover { background: #12303c; }
+.note { margin-top: 70px; color: var(--dim); }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>LA SENTINELLE</h1><div class="bar"></div>
+  <p class="lead">Trois façons de finir le combat quand sa coque tombe à zéro. Chaque concept est rendu image par image avec le vrai modèle du vaisseau des Anciens : ses lames, ses pétales, ses plaques et ses drones se détachent pour de vrai. Le feu, la fumée et les ondes de choc sont ajoutés par-dessus.</p>
+  <p class="lead">Dis-moi celui que tu veux (A, B ou C), ou ce que tu veux mélanger.</p>
+
+  <section class="concept">
+    <h2><b>A</b>Effondrement</h2>
+    <p>Des explosions en chaîne partent de partout et se rapprochent de plus en plus. Les lames des ailes s'arrachent une à une, puis les pétales de l'iris et les plaques de l'échine. Ses lumières rouges clignotent et meurent. Elle pique du nez, roule sur le côté et tombe vers l'astre en traînant feu et fumée. Un dernier éclair monte d'en bas quand elle disparaît.</p>
+    <div class="frame"><video src="fin/fin_effondrement.mp4" poster="fin/fin_effondrement.jpg" autoplay loop muted playsinline></video></div>
+    <div class="steps"><div><b>0 – 2 s</b>Premières explosions</div><div><b>2 – 5 s</b>Les pièces s'arrachent</div><div><b>5 – 7 s</b>Lumières éteintes, chute</div><div><b>7 – 9 s</b>Dernier éclair</div></div>
+  </section>
+
+  <section class="concept">
+    <h2><b>B</b>Rupture</h2>
+    <p>Le feu se concentre au milieu de la coque jusqu'à ce qu'elle casse en deux. L'avant pique du nez, l'arrière se cabre avec ses ailes, et des jets de feu sortent des deux cassures. Les deux moitiés tombent en s'écartant, puis le cœur de la poupe explose dans une onde de choc.</p>
+    <div class="frame"><video src="fin/fin_rupture.mp4" poster="fin/fin_rupture.jpg" autoplay loop muted playsinline></video></div>
+    <div class="steps"><div><b>0 – 2,5 s</b>Le milieu s'embrase</div><div><b>2,6 s</b>Cassure</div><div><b>3 – 6,5 s</b>Les deux moitiés tombent</div><div><b>6,6 s</b>Le cœur explose</div></div>
+  </section>
+
+  <section class="concept">
+    <h2><b>C</b>Surcharge</h2>
+    <p>Son moteur s'emballe : l'anneau tourne de plus en plus vite, l'iris s'ouvre, le cœur gonfle et devient blanc. Des arcs électriques courent sur toute la coque et les lumières stroboscopent. Puis le cœur s'effondre dans un éclair qui souffle toutes ses pièces dans toutes les directions. La coque nue, en feu, tombe vers l'astre.</p>
+    <div class="frame"><video src="fin/fin_surcharge.mp4" poster="fin/fin_surcharge.jpg" autoplay loop muted playsinline></video></div>
+    <div class="steps"><div><b>0 – 1,5 s</b>Le moteur s'emballe</div><div><b>1,5 – 4,3 s</b>Arcs et strobes</div><div><b>4,3 s</b>Le cœur s'effondre</div><div><b>5 – 9 s</b>La coque tombe</div></div>
+  </section>
+
+  <p class="note">En jeu, le mouvement serait calculé de la même façon sur le serveur et chez chaque joueur, comme sa route. Les explosions et les sons seraient ceux du mod, et les récompenses arriveraient à la dernière explosion.</p>
+</div>
+<script>
+// les vidéos ne tournent que lorsqu'on les voit
+const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? e.target.play().catch(() => {}) : e.target.pause()), { threshold: .2 });
+document.querySelectorAll('video').forEach(v => io.observe(v));
+</script>
+</body>
+</html>
